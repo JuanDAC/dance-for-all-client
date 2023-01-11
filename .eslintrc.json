@@ -12,7 +12,9 @@
   },
   "plugins": ["@typescript-eslint"],
   "env": {
-    "browser": true
+    "browser": true,
+    "es2021": true,
+    "node": true
   },
   "rules": {
     "no-prototype-builtins": "off",

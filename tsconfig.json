@@ -3,11 +3,8 @@
     "target": "es2019",
     "module": "es2020",
     "lib": ["es2020", "DOM", "DOM.Iterable"],
-    "declaration": true,
-    "declarationMap": true,
     "sourceMap": true,
     "inlineSources": true,
-    "outDir": "./",
     "rootDir": "./src",
     "strict": true,
     "noUnusedLocals": true,
@@ -26,7 +23,16 @@
         "name": "ts-lit-plugin",
         "strict": true
       }
-    ]
+    ],
+    "baseUrl": "./src" /* Specify the base directory to resolve non-relative module names. */,
+    "resolveJsonModule": true /* Enable importing .json files. */,
+    "allowJs": true /* Allow JavaScript files to be a part of your program. Use the 'checkJS' option to get errors from these files. */,
+    "esModuleInterop": true /* Emit additional JavaScript to ease support for importing CommonJS modules. This enables 'allowSyntheticDefaultImports' for type compatibility. */,
+    "strictNullChecks": true /* When type checking, take into account 'null' and 'undefined'. */,
+    "strictFunctionTypes": true /* When assigning functions, check to ensure parameters and the return values are subtype-compatible. */,
+    "useUnknownInCatchVariables": true /* Default catch clause variables as 'unknown' instead of 'any'. */,
+    "alwaysStrict": true /* Ensure 'use strict' is always emitted. */,
+    "useDefineForClassFields": false
   },
   "include": ["src/**/*.ts"],
   "exclude": []
