@@ -32,7 +32,8 @@ export const htmlTemplate = (js = []) => {
     });
 
   const scripts = [...dependencies, ...aplication].reduce(
-    (acum, {fileName}) => `${acum}  <script src="${fileName}"></script>\n`,
+    (acum, {fileName}) =>
+      `${acum}  <script type="module" src="${fileName}"></script>\n`,
     ''
   );
 

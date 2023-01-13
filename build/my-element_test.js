@@ -1,6 +1,8 @@
 
 (function(l, r) { if (!l || l.getElementById('livereloadscript')) return; r = l.createElement('script'); r.async = 1; r.src = '//' + (self.location.host || 'localhost').split(':')[0] + ':35729/livereload.js?snipver=1'; r.id = 'livereloadscript'; l.getElementsByTagName('head')[0].appendChild(r) })(self.document);
-import { y, b, x, Z, M as MyElement } from './my-element-6025f644.js';
+import { MyElement } from './my-element.js';
+import { y, b, x, Z } from './query-assigned-elements-c9e89c8d.js';
+import './property-e4014f26.js';
 
 var e$3="undefined"!=typeof globalThis?globalThis:"undefined"!=typeof window?window:"undefined"!=typeof global?global:"undefined"!=typeof self?self:{};function t$1(e){throw new Error('Could not dynamically require "'+e+'". Please configure the dynamicRequireTargets or/and ignoreDynamicRequires option of @rollup/plugin-commonjs appropriately for this require call to work.')}var o$1=function(){function e(n,o,r){function i(a,c){if(!o[a]){if(!n[a]){if(!c&&t$1)return t$1(a);if(s)return s(a,!0);var u=new Error("Cannot find module '"+a+"'");throw u.code="MODULE_NOT_FOUND",u}var f=o[a]={exports:{}};n[a][0].call(f.exports,(function(e){return i(n[a][1][e]||e)}),f,f.exports,e,n,o,r);}return o[a].exports}for(var s=t$1,a=0;a<r.length;a++)i(r[a]);return i}return e}()({1:[function(e,t,n){t.exports=e("./lib/chai");},{"./lib/chai":2}],2:[function(e,t,n){
 /*!
@@ -2345,7 +2347,7 @@ function litFixtureSync(template, options = {}, getScopedElementsTemplate) {
 async function litFixture(template, options = {}) {
   /** @type {import('./scopedElementsWrapper.js').ScopedElementsTemplateGetter|undefined} */
   const getScopedElementsTemplate = options.scopedElements
-    ? await import('./scopedElementsWrapper-1ecb92d8.js').then(
+    ? await import('./scopedElementsWrapper-09fc1725.js').then(
         scopedElementWrapper => scopedElementWrapper.getScopedElementsTemplate,
       )
     : undefined;

@@ -31,7 +31,7 @@ export const output = {
 };
 
 export const plugins = [
-  resolve(),
+  resolve({browser: true}),
   commonjs(),
   babel({
     babelHelpers: 'bundled',
