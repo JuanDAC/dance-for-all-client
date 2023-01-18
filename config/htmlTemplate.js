@@ -1,6 +1,6 @@
 import {join} from 'path';
 import {readFileSync, copyFileSync, existsSync, mkdirSync} from 'fs';
-import {STATICS_DIR, DEPENDENCY_DIR, BUILD_DIR} from './globals';
+import {STATICS_DIR, DEPENDENCY_DIR, BUILD_DIR, loadFiles} from './globals';
 
 const dependenciesFiles = [
   '/@webcomponents/webcomponentsjs/webcomponents-loader.js',
@@ -25,10 +25,28 @@ export const htmlTemplate = (js = []) => {
     fileName: direction.split('/').pop(),
   }));
 
+  loadFiles(STATICS_DIR, '.\\..').forEach((direction) => {
+    const filePath = direction.split(STATICS_DIR).pop();
+    const fileDirectory = filePath.split('/')[1];
+
+    if (filePath.split('/').length <= 2) {
+      return;
+    }
+
+    if (!existsSync(join(BUILD_DIR, fileDirectory))) {
+      mkdirSync(join(BUILD_DIR, fileDirectory), {
+        recursive: true,
+      });
+    }
+
+    copyFileSync(direction, join(BUILD_DIR, filePath));
+  });
+
   dependenciesFiles
     .map((direction) => join(DEPENDENCY_DIR, direction))
     .forEach((direction) => {
-      copyFileSync(direction, join(BUILD_DIR, direction.split('/').pop()));
+      const nameDependency = join(BUILD_DIR, direction.split('/').pop());
+      copyFileSync(direction, nameDependency);
     });
 
   const scripts = [...dependencies, ...aplication].reduce(

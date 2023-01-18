@@ -1,0 +1,26 @@
+@import url('https://fonts.googleapis.com/css2?family=Exo+2:wght@300;700;900&display=swap');
+
+* {
+  margin: 0px;
+  padding: 0px;
+  font-family: 'Exo 2', sans-serif;
+  user-select: none;
+}
+
+body {
+  font-family: 'Exo 2', sans-serif;
+  width: 100vw;
+  height: 100vh;
+  background-size: 100% 100% !important;
+  image-rendering: pixelated !important;
+  background-blend-mode: lighten !important;
+  backdrop-filter: blur(5px) saturate(2) brightness(0.75) !important;
+  filter: opacity(0.8) !important;
+  background-color: rgb(63, 161, 251);
+  overflow: hidden !important;
+  background-image: linear-gradient(
+    142deg,
+    rgba(63, 161, 251, 1) 0%,
+    rgba(252, 70, 168, 1) 100%
+  );
+}

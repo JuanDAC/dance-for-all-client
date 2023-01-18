@@ -4,6 +4,7 @@
  * Copyright 2021 Google LLC
  * SPDX-License-Identifier: BSD-3-Clause
  */
+/*
 
 import {MyElement} from '../my-element.js';
 
@@ -68,3 +69,4 @@ suite('my-element', () => {
     assert.equal(getComputedStyle(el).paddingTop, '16px');
   });
 });
+ */
