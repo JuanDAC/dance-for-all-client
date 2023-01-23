@@ -1,16 +1,7 @@
 import {LitElement, PropertyValueMap} from 'lit';
 import {customElement, property, query} from 'lit/decorators.js';
 import '../../share/title/title';
-import {
-  actionsStyles,
-  animationStyles,
-  hostStyles,
-  menuStyles,
-  messageStyles,
-  scoreStyles,
-  startsStyles,
-  videoStyles,
-} from './dance.styles';
+import {styles} from './dance.styles';
 import {template} from './dance.template';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
@@ -29,16 +20,7 @@ export type Skeletones = Skeleton[];
 @customElement('dance-for-everyone-route-dance')
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export class Dance extends LitElement {
-  static override styles = [
-    hostStyles,
-    videoStyles,
-    actionsStyles,
-    scoreStyles,
-    startsStyles,
-    messageStyles,
-    menuStyles,
-    animationStyles,
-  ];
+  static override styles = [...styles];
 
   @query('#dance__video')
   public $video!: HTMLVideoElement;
@@ -50,19 +32,13 @@ export class Dance extends LitElement {
   public poses!: EventPose;
 
   @property({type: Number})
-  videoHeight: number = window.innerHeight;
+  public videoHeight: number = window.innerHeight;
 
   @property({type: Number})
-  videoWidth: number = window.innerWidth;
+  public videoWidth: number = window.innerWidth;
 
   constructor() {
     super();
-    this.videoWidth = window.innerWidth;
-    this.videoHeight = window.innerHeight;
-    window.addEventListener('resize', () => {
-      this.videoWidth = window.innerWidth;
-      this.videoHeight = window.innerHeight;
-    });
     this.render = template.bind(this);
   }
 

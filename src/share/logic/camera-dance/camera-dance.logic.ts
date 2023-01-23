@@ -1,6 +1,5 @@
 import p5 from 'p5';
-import type {Dance, Skeleton, Skeletones} from 'routes/dance/dance';
-import {EventPose, Pose} from 'routes/dance/dance.types';
+import type {Dance} from 'routes/dance/dance';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import * as ml5 from 'ml5';

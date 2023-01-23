@@ -247,3 +247,14 @@ export const animationStyles = css`
     }
   }
 `;
+
+export const styles = [
+  hostStyles,
+  videoStyles,
+  actionsStyles,
+  scoreStyles,
+  startsStyles,
+  messageStyles,
+  menuStyles,
+  animationStyles,
+];
