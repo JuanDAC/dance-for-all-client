@@ -1,17 +1,13 @@
-import p5 from 'p5';
+import p5, {Element} from 'p5';
 import type {Dance} from 'routes/dance/dance';
+import {EventOn, PoseNet} from '../pose-net/pose-net.logic';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
-import * as ml5 from 'ml5';
+/* import * as ml5 from 'ml5'; */
 
-export class CameraDance {
-  private dance: Dance;
-  private p!: p5;
-  private camera!: p5.Renderer;
-  private poseNet = ml5.poseNet();
-
-  constructor(dance: Dance) {
-    this.dance = dance;
+export class CameraDance extends PoseNet {
+  constructor(dance: Dance, poseNet: Ml5) {
+    super(dance, poseNet);
   }
 
   public conection(p: p5) {
@@ -20,15 +16,38 @@ export class CameraDance {
     this.p.draw = () => this.draw();
   }
 
+  override on({poses, estimatesPoses}: EventOn): void {
+    if (poses) {
+      this.dance.posesCamera = poses;
+    }
+    if (estimatesPoses) {
+      this.dance.estimatesPosesCamera = estimatesPoses;
+    }
+  }
+
   private setup() {
     const {VIDEO} = this.p;
     const width = window.innerWidth - 100,
       height = window.innerHeight - 100;
 
-    this.camera = this.p.createCapture(VIDEO);
-    this.camera.size(width, height);
-    this.camera.hide();
+    this.image = this.p.createCapture(VIDEO) as Element;
+    this.image.size(width, height);
+    this.image.hide();
   }
 
-  private draw() {}
+  private draw() {
+    this.load();
+    const currentPoses = this.dance?.posesCamera ?? [];
+    if (
+      currentPoses.length === 0 &&
+      (this.estimatesPoses.length > 12 || this.gotoRemove)
+    ) {
+      this.estimatesPoses.shift();
+      this.on.call(this, {estimatesPoses: [...this.estimatesPoses]});
+    }
+    if (this.estimatesPoses.length === 0) {
+      this.gotoRemove = false;
+    }
+    currentPoses.forEach(this.storageEstimates.bind(this));
+  }
 }

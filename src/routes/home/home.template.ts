@@ -1,5 +1,5 @@
 import {html} from 'lit';
-import '../../share/title/title.types';
+import '../../share/components/title/title.types';
 
 export const template = html`
   <section class="header">

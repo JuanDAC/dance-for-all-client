@@ -103,30 +103,6 @@ export const startsStyles = css`
   }
 `;
 
-export const messageStyles = css`
-  .dance__message {
-    position: absolute;
-    top: 20px;
-    transform: scale(0);
-  }
-
-  .dance__message.--active {
-    animation: dance__message--active ease-in-out 1s;
-  }
-
-  .dance__message.--good {
-    filter: hue-rotate(295deg);
-  }
-
-  .dance__message.--perfect {
-    filter: hue-rotate(0deg);
-  }
-
-  .dance__message.--bad {
-    filter: hue-rotate(84deg);
-  }
-`;
-
 export const menuStyles = css`
   .dance__menu {
     display: flex;
@@ -200,30 +176,6 @@ export const animationStyles = css`
     }
   }
 
-  @keyframes dance__message--active {
-    0% {
-      transform: scale(0);
-    }
-    25% {
-      transform: scale(0.75) rotate(-1deg);
-    }
-    37.5% {
-      transform: scale(0.75) rotate(1deg);
-    }
-    50% {
-      transform: scale(0.75) rotate(-1deg);
-    }
-    62.5% {
-      transform: scale(0.75) rotate(1deg);
-    }
-    75% {
-      transform: scale(0.75) rotate(-1deg);
-    }
-    100% {
-      transform: scale(0);
-    }
-  }
-
   @keyframes dance__start--active {
     0% {
       filter: drop-shadow(yellow 0px -2px 10px);
@@ -254,7 +206,6 @@ export const styles = [
   actionsStyles,
   scoreStyles,
   startsStyles,
-  messageStyles,
   menuStyles,
   animationStyles,
 ];

@@ -1,6 +1,7 @@
 import {html} from 'lit';
 import {Dance} from './dance';
-import '../../share/title/title.types';
+import '../../share/components/title/title.types';
+import '../../share/components/message-score/message-score.type';
 
 export function template(this: Dance) {
   return html`
@@ -27,21 +28,10 @@ export function template(this: Dance) {
             <li class="dance__start"></li>
             <li class="dance__start"></li>
           </ul>
-          <div class="dance__message --good">
-            <dance-for-everyone-title>
-              <span data-big>good</span>
-            </dance-for-everyone-title>
-          </div>
-          <div class="dance__message --perfect">
-            <dance-for-everyone-title>
-              <span data-big>perfect</span>
-            </dance-for-everyone-title>
-          </div>
-          <div class="dance__message --bad">
-            <dance-for-everyone-title>
-              <span data-big>bad</span>
-            </dance-for-everyone-title>
-          </div>
+          <dance-for-everyone-message-score
+            .dance-active=${false}
+            .dance-kind=${'perfect'}
+          ></dance-for-everyone-message-score>
         </div>
       </article>
       <nav class="dance__menu">

@@ -1,7 +1,7 @@
 import p5 from 'p5';
 import type {Dance} from 'routes/dance/dance';
-import type {Point} from 'routes/dance/dance.types';
 import {P5Polar, polar} from 'share/services/p5/polar';
+import '../../services/ml5/ml5.types';
 
 type BorderGradientArguments = {
   color: string;
@@ -91,7 +91,7 @@ export class CanvasEffects {
       width: 30,
     });
 
-    (this.dance.poses ?? []).forEach(({skeleton}) => {
+    (this.dance?.posesVideo ?? []).forEach(({skeleton}) => {
       if (this.activeAnimation !== -1) {
         if (this.activeAnimation === 0 || !this.memorized)
           this.poseMemorized = skeleton.flat().map(({position}) => position);
