@@ -10,6 +10,7 @@ import * as ml5 from 'ml5';
 import {CanvasEffects} from 'share/logic/canvas-effects/canvas-effects.logic';
 import {CanvasDance} from 'share/logic/canvas-dance/canvas-dance.logic';
 import {CameraDance} from 'share/logic/camera-dance/camera-dance.logic';
+import {Percentages} from './dance.types';
 
 @customElement('dance-for-everyone-route-dance')
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -21,6 +22,10 @@ export class Dance extends LitElement {
 
   public estimatesPosesVideo: EstimatesPoses = [];
   public estimatesPosesCamera: EstimatesPoses = [];
+
+  public canvasEffectsHandler!: CanvasEffects;
+  public canvasDanceHandler!: CanvasDance;
+  public cameraDanceHandler!: CameraDance;
 
   private poseNet = ml5.poseNet();
 
@@ -35,6 +40,18 @@ export class Dance extends LitElement {
 
   @property({type: Number})
   public videoWidth: number = window.innerWidth;
+
+  @property()
+  danceColor = [];
+
+  @property()
+  danceVelocity = [];
+
+  @property()
+  danceActive = false;
+
+  @property()
+  danceKind!: 'good' | 'perfect' | 'bad' | '';
 
   constructor() {
     super();
@@ -59,24 +76,132 @@ export class Dance extends LitElement {
   }
 
   private playerValidation() {
-    console.log('EstimatesPosesVideo');
-    console.log(this.estimatesPosesVideo);
-    console.log('EstimatesPosesCamera');
-    console.log(this.estimatesPosesCamera);
+    const estimatesPosesVideo = [...this.estimatesPosesVideo];
+    const estimatesPosesCamera = [...this.estimatesPosesCamera];
+
+    const percentagesVideo: {[T in keyof Percentages]: number[]} = {
+      upperTrunk: [],
+      lowerTrunk: [],
+      arms: [],
+      legs: [],
+      all: [],
+    };
+    const percentagesCamera: Percentages = {
+      upperTrunk: 0,
+      lowerTrunk: 0,
+      arms: 0,
+      legs: 0,
+      all: 0,
+    };
+    estimatesPosesVideo.forEach(([_, upperTrunk, lowerTrunk, legs, arms]) => {
+      percentagesVideo.upperTrunk.push(upperTrunk ?? 0);
+      percentagesVideo.lowerTrunk.push(lowerTrunk ?? 0);
+      percentagesVideo.legs.push(legs ?? 0);
+      percentagesVideo.arms.push(arms ?? 0);
+      percentagesVideo.all.push(
+        upperTrunk ?? 0,
+        lowerTrunk ?? 0,
+        legs ?? 0,
+        arms ?? 0
+      );
+    });
+    estimatesPosesCamera.forEach(([_, upperTrunk, lowerTrunk, legs, arms]) => {
+      percentagesCamera.upperTrunk += Number(
+        percentagesVideo.upperTrunk.includes(upperTrunk ?? 0)
+      );
+      percentagesCamera.lowerTrunk += Number(
+        percentagesVideo.lowerTrunk.includes(lowerTrunk ?? 0)
+      );
+      percentagesCamera.legs += Number(
+        percentagesVideo.legs.includes(legs ?? 0)
+      );
+      percentagesCamera.arms += Number(
+        percentagesVideo.arms.includes(arms ?? 0)
+      );
+      percentagesCamera.all +=
+        Number(percentagesVideo.all.includes(upperTrunk ?? 0)) +
+        Number(percentagesVideo.all.includes(lowerTrunk ?? 0)) +
+        Number(percentagesVideo.all.includes(legs ?? 0)) +
+        Number(percentagesVideo.all.includes(arms ?? 0));
+    });
+
+    const {length} = estimatesPosesCamera;
+    percentagesCamera.upperTrunk /= length;
+    percentagesCamera.lowerTrunk /= length;
+    percentagesCamera.legs /= length;
+    percentagesCamera.arms /= length;
+    percentagesCamera.all /= length * 4;
+
+    const values = Object.values(percentagesCamera);
+    const fails = values.filter((v) => v === 0);
+
+    if (fails.length > 0)
+      this.setMessage(estimatesPosesCamera, estimatesPosesVideo, 0);
+
+    const percentages = percentagesCamera.all;
+
+    if (fails.length === 0)
+      this.setMessage(estimatesPosesCamera, estimatesPosesVideo, percentages);
+
+    this.cameraDanceHandler.estimatesClear();
+    this.canvasDanceHandler.estimatesClear();
+    this.requestUpdate();
+  }
+
+  private setMessage(
+    estimatesPosesCamera: EstimatesPose[],
+    estimatesPosesVideo: EstimatesPose[],
+    percentage: number
+  ) {
+    if (['good', 'perfect', 'bad'].includes(this.danceKind)) {
+      this.danceActive = false;
+      this.danceKind = '';
+      return 1;
+    }
+
+    if (estimatesPosesVideo.length < 6) {
+      this.danceActive = false;
+      this.danceKind = '';
+      return 0;
+    }
+
+    if (estimatesPosesCamera.length < 6) {
+      this.danceActive = true;
+      this.danceKind = 'bad';
+      return 0;
+    }
+
+    console.log(percentage);
+
+    if (percentage < 0.5) {
+      this.danceActive = true;
+      this.danceKind = 'bad';
+      return 1;
+    }
+
+    if (percentage < 0.8) {
+      this.danceActive = true;
+      this.danceKind = 'good';
+      return 1;
+    }
+
+    this.danceActive = true;
+    this.danceKind = 'perfect';
+    return 1;
   }
 
   private get canvasEfectsSketch() {
-    const canvasEffects = new CanvasEffects(this);
-    return canvasEffects.conection.bind(canvasEffects);
+    this.canvasEffectsHandler = new CanvasEffects(this);
+    return this.canvasEffectsHandler.conection.bind(this.canvasEffectsHandler);
   }
 
   private get canvasDanceSketch() {
-    const canvasDance = new CanvasDance(this, this.poseNet);
-    return canvasDance.conection.bind(canvasDance);
+    this.canvasDanceHandler = new CanvasDance(this, this.poseNet);
+    return this.canvasDanceHandler.conection.bind(this.canvasDanceHandler);
   }
 
   private get cameraDanceSketch() {
-    const cameraDance = new CameraDance(this, this.poseNet);
-    return cameraDance.conection.bind(cameraDance);
+    this.cameraDanceHandler = new CameraDance(this, this.poseNet);
+    return this.cameraDanceHandler.conection.bind(this.cameraDanceHandler);
   }
 }

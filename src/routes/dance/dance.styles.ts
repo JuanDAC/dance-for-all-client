@@ -32,6 +32,18 @@ export const videoStyles = css`
     width: calc(100% - 100px) !important;
     max-height: calc(100% - 200px) !important;
   }
+
+  .dance__wrapper-video > video:nth-of-type(2) {
+    display: block !important;
+    position: absolute !important;
+    top: 0px !important;
+    left: 0px !important;
+    visibility: visible !important;
+    width: 170px !important;
+    height: auto !important;
+    transform: scaleY(0.8) rotateY(180deg) !important;
+    filter: opacity(0.5) !important;
+  }
 `;
 
 export const actionsStyles = css`
@@ -56,50 +68,6 @@ export const scoreStyles = css`
     align-items: center;
     display: flex;
     flex-direction: column;
-  }
-`;
-
-export const startsStyles = css`
-  .dance__starts {
-    display: flex;
-    list-style: none;
-    gap: 4px;
-    justify-content: center;
-    padding: 0px;
-  }
-
-  .dance__start {
-    background-image: url(./assets/face_on_star.png);
-    background-size: 100% 100%;
-    width: 30px;
-    height: 30px;
-    filter: blur(1.5px) saturate(0);
-  }
-
-  .dance__start.--normal {
-    filter: hue-rotate(0deg);
-  }
-
-  .dance__start.--fantastic {
-    filter: hue-rotate(90deg);
-  }
-
-  .dance__start.--awesome {
-    filter: hue-rotate(220deg);
-  }
-
-  .dance__start.--active {
-    animation: dance__start--active infinite linear;
-  }
-
-  .dance__start.--slow {
-    animation-duration: 600ms;
-  }
-  .dance__start.--normal {
-    animation-duration: 400ms;
-  }
-  .dance__start.--fast {
-    animation-duration: 200ms;
   }
 `;
 
@@ -175,29 +143,6 @@ export const animationStyles = css`
       transform: translate(0px, 1px) skew(0, -5deg);
     }
   }
-
-  @keyframes dance__start--active {
-    0% {
-      filter: drop-shadow(yellow 0px -2px 10px);
-      transform: translate(0px, 2px);
-    }
-    25% {
-      filter: drop-shadow(yellow 2px 0px 10px);
-      transform: translate(-2px, 0px);
-    }
-    50% {
-      filter: drop-shadow(yellow 0px 2px 10px);
-      transform: translate(0px, -2px);
-    }
-    75% {
-      filter: drop-shadow(yellow -2px 0px 10px);
-      transform: translate(2px, 0px);
-    }
-    100% {
-      filter: drop-shadow(yellow 0px -2px 10px);
-      transform: translate(0px, 2px);
-    }
-  }
 `;
 
 export const styles = [
@@ -205,7 +150,6 @@ export const styles = [
   videoStyles,
   actionsStyles,
   scoreStyles,
-  startsStyles,
   menuStyles,
   animationStyles,
 ];

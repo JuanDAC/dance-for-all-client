@@ -38,16 +38,7 @@ export class CameraDance extends PoseNet {
   private draw() {
     this.load();
     const currentPoses = this.dance?.posesCamera ?? [];
-    if (
-      currentPoses.length === 0 &&
-      (this.estimatesPoses.length > 12 || this.gotoRemove)
-    ) {
-      this.estimatesPoses.shift();
-      this.on.call(this, {estimatesPoses: [...this.estimatesPoses]});
-    }
-    if (this.estimatesPoses.length === 0) {
-      this.gotoRemove = false;
-    }
     currentPoses.forEach(this.storageEstimates.bind(this));
+    this.on.call(this, {estimatesPoses: [...this.estimatesPoses]});
   }
 }

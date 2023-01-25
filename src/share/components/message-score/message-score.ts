@@ -7,14 +7,30 @@ import {renderTemplate} from './message-score.template';
 export class MessageScore extends LitElement {
   static override styles = [...styles];
 
-  @property({attribute: 'dance-kind'})
-  kind!: 'good' | 'active' | 'bad';
+  @property({attribute: 'data-kind'})
+  kind!: 'good' | 'perfect' | 'bad';
 
-  @property({attribute: 'dance-active'})
+  @property({attribute: 'data-active'})
   active = false;
 
   constructor() {
     super();
     this.render = renderTemplate.bind(this);
   }
+  /*   override attributeChangedCallback(
+    name: string,
+    old: string | null,
+    value: string | null
+  ): void {
+    super.attributeChangedCallback(name, old, value);
+    if (name.includes('data-active') && JSON.parse(value ?? 'false')) {
+      setTimeout(() => this.setAttribute('data-active', 'false'), 1000);
+    }
+  }
+ */
+  /*   override shouldUpdate(changedProperties: Map<string, unknown>) {
+    console.log(changedProperties);
+    // Only update element if prop1 changed.
+    return true;
+  } */
 }

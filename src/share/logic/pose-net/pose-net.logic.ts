@@ -9,7 +9,6 @@ export class PoseNet {
   protected p!: p5;
   protected image!: Image | HTMLVideoElement | ImageData | Element;
   protected estimatesPoses: EstimatesPoses = [];
-  protected gotoRemove = false;
 
   constructor(dance: Dance, poseNet: Ml5) {
     this.dance = dance;
@@ -123,10 +122,9 @@ export class PoseNet {
     ];
 
     this.estimatesPoses.push(skeletonEstimations);
-    if (this.estimatesPoses.length > 12 || this.gotoRemove) {
-      this.gotoRemove = true;
-      this.estimatesPoses.shift();
-    }
-    this.on.call(this, {estimatesPoses: [...this.estimatesPoses]});
+  }
+
+  public estimatesClear() {
+    this.estimatesPoses = [];
   }
 }

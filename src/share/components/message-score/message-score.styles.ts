@@ -1,14 +1,21 @@
 import {css} from 'lit';
 
 export const messageStyles = css`
+  :host {
+    width: 100%;
+    height: 100px;
+    position: relative;
+  }
+
   .dance__message {
     position: absolute;
-    top: 20px;
+    top: -40px;
+    left: -20px;
     transform: scale(0);
   }
 
   .dance__message.--active {
-    animation: dance__message--active ease-in-out 1s;
+    animation: dance__message--active ease-in-out 1s infinite;
   }
 
   .dance__message.--good {

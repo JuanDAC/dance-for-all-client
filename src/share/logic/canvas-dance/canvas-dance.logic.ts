@@ -57,6 +57,8 @@ export class CanvasDance extends PoseNet {
 
     this.load();
 
-    (this.dance?.posesVideo ?? []).forEach(this.storageEstimates.bind(this));
+    const currentPoses = this.dance?.posesVideo ?? [];
+    currentPoses.forEach(this.storageEstimates.bind(this));
+    this.on.call(this, {estimatesPoses: [...this.estimatesPoses]});
   }
 }

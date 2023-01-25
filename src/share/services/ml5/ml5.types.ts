@@ -39,7 +39,7 @@ declare global {
 
   type EventPose = {pose: Pose; skeleton: Skeleton}[];
 
-  type EstimatesPose = [{x: number; y: number}, number, number, number, number];
+  type EstimatesPose = [{x: number; y: number}?, number?, number?, number?, number?];
 
   type EstimatesPoses = EstimatesPose[];
 
