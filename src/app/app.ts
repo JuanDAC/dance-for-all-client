@@ -8,14 +8,16 @@ export const appName = 'dance-for-everyone-app';
 
 @customElement(appName)
 export class App extends LitElement {
-  routes = new Routes(this, [
+  routes: Routes = new Routes(this, [
     {
       path: '/',
-      render: () => html`<dance-for-everyone-route-home />`,
+      render: () =>
+        html`<dance-for-everyone-route-home .routes=${this.routes} />`,
     },
     {
       path: '/dance',
-      render: () => html`<dance-for-everyone-route-dance />`,
+      render: () =>
+        html`<dance-for-everyone-route-dance .routes=${this.routes} />`,
     },
     {
       path: '/upload',

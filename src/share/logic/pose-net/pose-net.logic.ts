@@ -82,7 +82,7 @@ export class PoseNet {
 
     const skeletonEstimations: EstimatesPose = [
       {x: nose.x, y: nose.y},
-      this.estimate({
+      /*       this.estimate({
         scale:
           (this.p.dist(leftShoulder.x, leftShoulder.y, rightHip.x, rightHip.y) +
             this.p.dist(
@@ -93,7 +93,7 @@ export class PoseNet {
             )) /
           2,
         ...pose,
-      }),
+      }), */
       this.estimate({
         scale:
           (this.p.dist(leftAnkle.x, leftAnkle.y, rightHip.x, rightHip.y) +

@@ -10,9 +10,6 @@ export class MessageScore extends LitElement {
   @property({attribute: 'data-kind'})
   kind!: 'good' | 'perfect' | 'bad';
 
-  @property({attribute: 'data-active'})
-  active = false;
-
   constructor() {
     super();
     this.render = renderTemplate.bind(this);

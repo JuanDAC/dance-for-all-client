@@ -36,7 +36,7 @@ export const videoStyles = css`
   .dance__wrapper-video > video:nth-of-type(2) {
     display: block !important;
     position: absolute !important;
-    top: 0px !important;
+    top: -15px !important;
     left: 0px !important;
     visibility: visible !important;
     width: 170px !important;
@@ -54,6 +54,7 @@ export const actionsStyles = css`
     width: 100%;
     display: grid;
     grid-template-columns: 200px 1fr 200px;
+    grid-template-rows: 200px 1fr 200px;
   }
 `;
 
@@ -100,6 +101,25 @@ export const menuStyles = css`
       3px 2px 1px #4af7ff, 2px 2px 1px #165bfb, 4px 2px 1px #4af7ff,
       3px 3px 1px #165bfb, 4px 3px 1px #4af7ff, 1px 1px 1px #165bfb,
       4px 3px 1px #4af7ff;
+  }
+
+  .dance__play {
+    grid-column: 2;
+    background: transparent;
+    border: none;
+    transform: scale(1.5);
+    cursor: pointer;
+    transition: all 300ms;
+    justify-self: center;
+    align-self: center;
+  }
+
+  .dance__play:hover {
+    filter: hue-rotate(270deg);
+  }
+
+  .dance__play.--active {
+    display: none;
   }
 `;
 

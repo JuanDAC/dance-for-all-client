@@ -10,24 +10,23 @@ export const messageStyles = css`
   .dance__message {
     position: absolute;
     top: -40px;
-    left: -20px;
+    left: -20%;
     transform: scale(0);
-  }
-
-  .dance__message.--active {
-    animation: dance__message--active ease-in-out 1s infinite;
   }
 
   .dance__message.--good {
     filter: hue-rotate(295deg);
+    animation: dance__message--active ease-in-out 1s;
   }
 
   .dance__message.--perfect {
     filter: hue-rotate(0deg);
+    animation: dance__message--active ease-in-out 1s;
   }
 
   .dance__message.--bad {
     filter: hue-rotate(84deg);
+    animation: dance__message--active ease-in-out 1s;
   }
 `;
 
@@ -37,19 +36,19 @@ export const animationStyles = css`
       transform: scale(0);
     }
     25% {
-      transform: scale(0.75) rotate(-1deg);
+      transform: scale(0.75) rotate(-2deg);
     }
     37.5% {
-      transform: scale(0.75) rotate(1deg);
+      transform: scale(0.75.1) rotate(2deg);
     }
     50% {
-      transform: scale(0.75) rotate(-1deg);
+      transform: scale(0.75) rotate(-2deg);
     }
     62.5% {
-      transform: scale(0.75) rotate(1deg);
+      transform: scale(0.75.1) rotate(2deg);
     }
     75% {
-      transform: scale(0.75) rotate(-1deg);
+      transform: scale(0.75) rotate(-2deg);
     }
     100% {
       transform: scale(0);

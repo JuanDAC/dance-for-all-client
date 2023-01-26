@@ -13,9 +13,6 @@ export function template(this: Dance) {
       <video
         id="dance__video"
         src="./videos/Downtown _ EASY Choreography-fSPsQ_f8OrE.mp4"
-        autoplay
-        muted
-        controls
       ></video>
     </section>
     <section class="dance__actions">
@@ -28,7 +25,6 @@ export function template(this: Dance) {
           >
           </dance-for-everyone-starts-score>
           <dance-for-everyone-message-score
-            data-active=${this.danceActive}
             data-kind=${this.danceKind}
           ></dance-for-everyone-message-score>
         </div>
@@ -41,6 +37,16 @@ export function template(this: Dance) {
           <span data-small>Add player</span>
         </button>
       </nav>
+      <button
+        class="dance__play ${(this.$video ?? {paused: true}).paused
+          ? ''
+          : '--active'}"
+        @click=${this.startDance}
+      >
+        <dance-for-everyone-title>
+          <span data-big>Play to Dance!</span>
+        </dance-for-everyone-title>
+      </button>
     </section>
   `;
 }

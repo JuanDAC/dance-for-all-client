@@ -48,9 +48,6 @@ export class Dance extends LitElement {
   danceVelocity = [];
 
   @property()
-  danceActive = false;
-
-  @property()
   danceKind!: 'good' | 'perfect' | 'bad' | '';
 
   constructor() {
@@ -67,12 +64,21 @@ export class Dance extends LitElement {
   ) {
     super.firstUpdated(changedProperties);
 
-    new p5(this.canvasDanceSketch, this.$video.parentElement!);
     new p5(this.cameraDanceSketch, this.$video.parentElement!);
+  }
+
+  startRecodingDance() {
+    new p5(this.canvasDanceSketch, this.$video.parentElement!);
     setTimeout(() => {
       new p5(this.canvasEfectsSketch, this.$video.parentElement!);
     }, 100);
     setInterval(this.playerValidation.bind(this), 1000);
+  }
+
+  startDance() {
+    this.$video.play().then(() => this.startRecodingDance());
+    this.$video.volume = 1;
+    console.log(this.$video)
   }
 
   private playerValidation() {
@@ -93,40 +99,44 @@ export class Dance extends LitElement {
       legs: 0,
       all: 0,
     };
-    estimatesPosesVideo.forEach(([_, upperTrunk, lowerTrunk, legs, arms]) => {
-      percentagesVideo.upperTrunk.push(upperTrunk ?? 0);
-      percentagesVideo.lowerTrunk.push(lowerTrunk ?? 0);
-      percentagesVideo.legs.push(legs ?? 0);
-      percentagesVideo.arms.push(arms ?? 0);
-      percentagesVideo.all.push(
-        upperTrunk ?? 0,
-        lowerTrunk ?? 0,
-        legs ?? 0,
-        arms ?? 0
-      );
-    });
-    estimatesPosesCamera.forEach(([_, upperTrunk, lowerTrunk, legs, arms]) => {
-      percentagesCamera.upperTrunk += Number(
+    estimatesPosesVideo.forEach(
+      ([_, /*upperTrunk,*/ lowerTrunk, legs, arms]) => {
+        /*       percentagesVideo.upperTrunk.push(upperTrunk ?? 0); */
+        percentagesVideo.lowerTrunk.push(lowerTrunk ?? 0);
+        percentagesVideo.legs.push(legs ?? 0);
+        percentagesVideo.arms.push(arms ?? 0);
+        percentagesVideo.all.push(
+          /*         upperTrunk ?? 0, */
+          lowerTrunk ?? 0,
+          legs ?? 0,
+          arms ?? 0
+        );
+      }
+    );
+    estimatesPosesCamera.forEach(
+      ([_, /* upperTrunk, */ lowerTrunk, legs, arms]) => {
+        /*       percentagesCamera.upperTrunk += Number(
         percentagesVideo.upperTrunk.includes(upperTrunk ?? 0)
-      );
-      percentagesCamera.lowerTrunk += Number(
-        percentagesVideo.lowerTrunk.includes(lowerTrunk ?? 0)
-      );
-      percentagesCamera.legs += Number(
-        percentagesVideo.legs.includes(legs ?? 0)
-      );
-      percentagesCamera.arms += Number(
-        percentagesVideo.arms.includes(arms ?? 0)
-      );
-      percentagesCamera.all +=
-        Number(percentagesVideo.all.includes(upperTrunk ?? 0)) +
-        Number(percentagesVideo.all.includes(lowerTrunk ?? 0)) +
-        Number(percentagesVideo.all.includes(legs ?? 0)) +
-        Number(percentagesVideo.all.includes(arms ?? 0));
-    });
+      ); */
+        percentagesCamera.lowerTrunk += Number(
+          percentagesVideo.lowerTrunk.includes(lowerTrunk ?? 0)
+        );
+        percentagesCamera.legs += Number(
+          percentagesVideo.legs.includes(legs ?? 0)
+        );
+        percentagesCamera.arms += Number(
+          percentagesVideo.arms.includes(arms ?? 0)
+        );
+        percentagesCamera.all +=
+          /*           Number(percentagesVideo.all.includes(upperTrunk ?? 0)) + */
+          Number(percentagesVideo.all.includes(lowerTrunk ?? 0)) +
+          Number(percentagesVideo.all.includes(legs ?? 0)) +
+          Number(percentagesVideo.all.includes(arms ?? 0));
+      }
+    );
 
     const {length} = estimatesPosesCamera;
-    percentagesCamera.upperTrunk /= length;
+    /*     percentagesCamera.upperTrunk /= length; */
     percentagesCamera.lowerTrunk /= length;
     percentagesCamera.legs /= length;
     percentagesCamera.arms /= length;
@@ -154,38 +164,30 @@ export class Dance extends LitElement {
     percentage: number
   ) {
     if (['good', 'perfect', 'bad'].includes(this.danceKind)) {
-      this.danceActive = false;
       this.danceKind = '';
       return 1;
     }
 
     if (estimatesPosesVideo.length < 6) {
-      this.danceActive = false;
       this.danceKind = '';
       return 0;
     }
 
     if (estimatesPosesCamera.length < 6) {
-      this.danceActive = true;
       this.danceKind = 'bad';
       return 0;
     }
 
-    console.log(percentage);
-
     if (percentage < 0.5) {
-      this.danceActive = true;
       this.danceKind = 'bad';
       return 1;
     }
 
     if (percentage < 0.8) {
-      this.danceActive = true;
       this.danceKind = 'good';
       return 1;
     }
 
-    this.danceActive = true;
     this.danceKind = 'perfect';
     return 1;
   }
