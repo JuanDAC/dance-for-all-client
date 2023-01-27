@@ -30,12 +30,16 @@ export class CameraDance extends PoseNet {
     const width = window.innerWidth - 100,
       height = window.innerHeight - 100;
 
-    this.image = this.p.createCapture(VIDEO) as Element;
+    this.image = this.p.createCapture(VIDEO, ({active}) => {
+      this.active = active;
+    }) as Element;
+
     this.image.size(width, height);
     this.image.hide();
   }
 
   private draw() {
+    if (!this.active) return;
     this.load();
     const currentPoses = this.dance?.posesCamera ?? [];
     currentPoses.forEach(this.storageEstimates.bind(this));

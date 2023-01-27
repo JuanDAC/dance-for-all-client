@@ -19,7 +19,7 @@ export class Home extends LitElement {
   override connectedCallback() {
     super.connectedCallback();
     setTimeout(() => {
-      this.routes.goto('/dance');
+      this.routes.goto('/search');
     }, 6000);
   }
 }

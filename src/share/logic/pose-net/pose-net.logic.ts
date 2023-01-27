@@ -9,6 +9,7 @@ export class PoseNet {
   protected p!: p5;
   protected image!: Image | HTMLVideoElement | ImageData | Element;
   protected estimatesPoses: EstimatesPoses = [];
+  protected active = false;
 
   constructor(dance: Dance, poseNet: Ml5) {
     this.dance = dance;
@@ -16,7 +17,7 @@ export class PoseNet {
   }
 
   load() {
-    if (!this.poseNet || !this.image) return;
+    if (!this.poseNet || !this.image || !this.active) return;
 
     const multiPose = this.poseNet.multiPose(this.image);
 

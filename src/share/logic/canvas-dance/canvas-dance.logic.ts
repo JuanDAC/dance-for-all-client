@@ -35,7 +35,14 @@ export class CanvasDance extends PoseNet {
     this.canvas.id('dance__game');
   }
 
+  public set activation(value: boolean) {
+    this.active = value;
+  }
+
   private draw() {
+    /*     if (!this.dance.$video || this.dance?.$video?.paused) return; */
+    if (!this.active) return;
+
     this.p.drawingContext.drawImage(
       this.dance.$video,
       0,
@@ -55,7 +62,9 @@ export class CanvasDance extends PoseNet {
       this.p.drawingContext as CanvasRenderingContext2D
     ).getImageData(0, 0, this.p.width, this.p.height);
 
-    this.load();
+    if (!this.dance.$video || !this.dance?.$video?.paused) {
+      /*       this.load(); */
+    }
 
     const currentPoses = this.dance?.posesVideo ?? [];
     currentPoses.forEach(this.storageEstimates.bind(this));

@@ -3,6 +3,7 @@ import {customElement} from 'lit/decorators.js';
 import {Routes} from '@lit-labs/router';
 import '../routes/home/home.types';
 import '../routes/dance/dance.types';
+import '../routes/search/search.types';
 
 export const appName = 'dance-for-everyone-app';
 
@@ -25,7 +26,8 @@ export class App extends LitElement {
     },
     {
       path: '/search',
-      render: () => html`<h1>search</h1>`,
+      render: () =>
+        html`<dance-for-everyone-route-video-search .routes=${this.routes} />`,
     },
     {
       path: '/*',

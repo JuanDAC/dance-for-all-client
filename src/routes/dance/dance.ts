@@ -1,5 +1,5 @@
-import {LitElement, PropertyValueMap} from 'lit';
-import {customElement, property, query} from 'lit/decorators.js';
+import {LitElement} from 'lit';
+import {customElement, property, query, state} from 'lit/decorators.js';
 import '../../share/components/title/title';
 import {styles} from './dance.styles';
 import {template} from './dance.template';
@@ -11,6 +11,7 @@ import {CanvasEffects} from 'share/logic/canvas-effects/canvas-effects.logic';
 import {CanvasDance} from 'share/logic/canvas-dance/canvas-dance.logic';
 import {CameraDance} from 'share/logic/camera-dance/camera-dance.logic';
 import {Percentages} from './dance.types';
+import {Task} from '@lit-labs/task';
 
 @customElement('dance-for-everyone-route-dance')
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -50,8 +51,29 @@ export class Dance extends LitElement {
   @property()
   danceKind!: 'good' | 'perfect' | 'bad' | '';
 
+  @state()
+  videoId!: string;
+
+  searchParams = new URLSearchParams(location.search);
+
+  apiTask = new Task(
+    this,
+    async ([userId]) => {
+      const data = await fetch(`http://localhost:3000/media/video/${userId}`, {
+        method: 'GET',
+        headers: {
+          Accept: '*/*',
+        },
+      });
+      const blob = await data.blob();
+      return URL.createObjectURL(blob);
+    },
+    () => [this.videoId]
+  );
+
   constructor() {
     super();
+    this.videoId = this.searchParams.get('v') ?? '';
     this.render = template.bind(this);
   }
 
@@ -59,26 +81,21 @@ export class Dance extends LitElement {
     super.connectedCallback();
   }
 
-  override firstUpdated(
-    changedProperties: PropertyValueMap<unknown> | Map<PropertyKey, unknown>
-  ) {
-    super.firstUpdated(changedProperties);
-
-    new p5(this.cameraDanceSketch, this.$video.parentElement!);
-  }
-
   startRecodingDance() {
+    new p5(this.cameraDanceSketch, this.$video.parentElement!);
     new p5(this.canvasDanceSketch, this.$video.parentElement!);
     setTimeout(() => {
       new p5(this.canvasEfectsSketch, this.$video.parentElement!);
+      this.canvasDanceHandler.activation = true;
     }, 100);
     setInterval(this.playerValidation.bind(this), 1000);
   }
 
   startDance() {
-    this.$video.play().then(() => this.startRecodingDance());
+    this.$video.play().then(() => {
+      this.startRecodingDance();
+    });
     this.$video.volume = 1;
-    console.log(this.$video)
   }
 
   private playerValidation() {
@@ -158,7 +175,7 @@ export class Dance extends LitElement {
     this.requestUpdate();
   }
 
-  private setMessage(
+  setMessage(
     estimatesPosesCamera: EstimatesPose[],
     estimatesPosesVideo: EstimatesPose[],
     percentage: number
@@ -192,17 +209,17 @@ export class Dance extends LitElement {
     return 1;
   }
 
-  private get canvasEfectsSketch() {
+  get canvasEfectsSketch() {
     this.canvasEffectsHandler = new CanvasEffects(this);
     return this.canvasEffectsHandler.conection.bind(this.canvasEffectsHandler);
   }
 
-  private get canvasDanceSketch() {
+  get canvasDanceSketch() {
     this.canvasDanceHandler = new CanvasDance(this, this.poseNet);
     return this.canvasDanceHandler.conection.bind(this.canvasDanceHandler);
   }
 
-  private get cameraDanceSketch() {
+  get cameraDanceSketch() {
     this.cameraDanceHandler = new CameraDance(this, this.poseNet);
     return this.cameraDanceHandler.conection.bind(this.cameraDanceHandler);
   }
