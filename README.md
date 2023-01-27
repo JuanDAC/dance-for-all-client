@@ -1,134 +1,157 @@
-# LitElement TypeScript starter
+# Dance For Everyone - Frontend
 
-This project includes a sample component using LitElement with TypeScript.
+Dance For Everyone is an interactive web application that allows users to learn and perform different dance styles using state-of-the-art machine learning models.
 
-This template is generated from the `lit-starter-ts` package in [the main Lit
-repo](https://github.com/lit/lit). Issues and PRs for this template should be
-filed in that repo.
+## Table of Contents
 
-## Setup
+- Features
+- Technologies
+- Installation
+- Usage
+- Documentation
+- Contribution
+- License
 
-Install dependencies:
+## Features
+
+- Real-time human pose estimation using @tensorflow-models/posenet
+- Interactive dance tutorials using ml5.js
+- Web-based user interface built using LitElement and Web Components
+- Routing and task management using @lit-labs/router and @lit-labs/task
+- Build tooling using Rollup
+- Written in TypeScript
+
+## Technologies
+
+- LitElement - A lightweight base class for creating fast, web-components with a simple and expressive API.
+- Web Components - A set of technologies that allow developers to create custom, reusable elements for building web applications.
+- TypeScript - A superset of JavaScript that adds optional static typing and other features to improve the development experience.
+- Rollup - A JavaScript module bundler that generates optimized, small bundles for production use.
+- @tensorflow-models/posenet - A TensorFlow.js model for real-time human pose estimation.
+- ml5.js - A friendly, high-level API for using machine learning models in the browser.
+- @lit-labs/router - A lightweight router for web components, built with LitElement.
+- @lit-labs/task - A task management library for web components, built with LitElement.
+
+## Installation
+
+To run the Dance For Everyone frontend, you will need to have Node.js and npm (Node Package Manager) installed on your machine. Once you have those set up, you can follow these steps to install and run the project:
+
+- Clone or download the repository to your local machine.
+- Navigate to the project's root directory in your terminal.
+- Run npm install to install all the necessary dependencies.
+- Run npm run dev to start the development server.
+
+To install the dependencies and start the development server, run the following commands:
 
 ```bash
-npm i
+npm install
+npm run dev
 ```
 
-## Build
+This will start a development server on http://localhost:3000.
 
-This sample uses the TypeScript compiler to produce JavaScript that runs in modern browsers.
-
-To build the JavaScript version of your component:
+To build the application for production, run:
 
 ```bash
 npm run build
 ```
 
-To watch files and rebuild when the files are modified, run the following command in a separate shell:
+This will generate optimized, production-ready bundles in the build directory
 
-```bash
-npm run build:watch
-```
+## Usage
 
-Both the TypeScript compiler and lit-analyzer are configured to be very strict. You may want to change `tsconfig.json` to make them less strict.
+The Dance For Everyone frontend is built using web components and the lit-element library, which allows for easy creation of lightweight and fast web components. We also use Typescript for type checking and to improve developer experience.
 
-## Testing
+The project uses Rollup as its building tool, which allows for efficient and optimized builds.
 
-This sample uses modern-web.dev's
-[@web/test-runner](https://www.npmjs.com/package/@web/test-runner) for testing. See the
-[modern-web.dev testing documentation](https://modern-web.dev/docs/test-runner/overview) for
-more information.
+We use ml5 library which is friendly to both beginners and experienced machine learning developers. It provides an easy-to-use API for creating and training machine learning models.
 
-Tests can be run with the `test` script, which will run your tests against Lit's development mode (with more verbose errors) as well as against Lit's production mode:
+We also use @lit-labs/router for client-side routing, @lit-labs/task for managing async tasks, and @tensorflow-models/posenet and @tensorflow/tfjs for running machine learning models to detect human poses.
 
-```bash
-npm test
-```
+## Documentation
 
-For local testing during development, the `test:dev:watch` command will run your tests in Lit's development mode (with verbose errors) on every change to your source files:
+### Customization
 
-```bash
-npm test:watch
-```
+The application is built with web-components and Lit Element, making it easy to customize and add new features. The components are written in TypeScript, making the code easy to understand and maintain.
 
-Alternatively the `test:prod` and `test:prod:watch` commands will run your tests in Lit's production mode.
+### Routing
 
-## Dev Server
+Routing is handled by the @lit-labs/router library. You can add new routes by editing the router.ts file in the src directory.
 
-This sample uses modern-web.dev's [@web/dev-server](https://www.npmjs.com/package/@web/dev-server) for previewing the project without additional build steps. Web Dev Server handles resolving Node-style "bare" import specifiers, which aren't supported in browsers. It also automatically transpiles JavaScript and adds polyfills to support older browsers. See [modern-web.dev's Web Dev Server documentation](https://modern-web.dev/docs/dev-server/overview/) for more information.
+### Pose Detection
 
-To run the dev server and open the project in a new browser tab:
+The pose detection is handled by the @tensorflow-models/posenet library. You can customize the model by editing the posenet.ts file in the src directory.
 
-```bash
-npm run serve
-```
+### Dance Routine
 
-There is a development HTML file located at `/dev/index.html` that you can view at http://localhost:8000/dev/index.html. Note that this command will serve your code using Lit's development mode (with more verbose errors). To serve your code against Lit's production mode, use `npm run serve:prod`.
+The dance routine is defined in the dance-routine.ts file in the src directory. You can add new poses and transitions to the routine by editing this file.
 
-## Editing
+### Structure
 
-If you use VS Code, we highly recommend the [lit-plugin extension](https://marketplace.visualstudio.com/items?itemName=runem.lit-plugin), which enables some extremely useful features for lit-html templates:
+The project is organized into several different directories, each with its own purpose.
 
-- Syntax highlighting
-- Type-checking
-- Code completion
-- Hover-over docs
-- Jump to definition
-- Linting
-- Quick Fixes
+#### src/
 
-The project is setup to recommend lit-plugin to VS Code users if they don't already have it installed.
+This is the main directory for the source code of the application. It contains the following subdirectories:
 
-## Linting
+#### app/
 
-Linting of TypeScript files is provided by [ESLint](eslint.org) and [TypeScript ESLint](https://github.com/typescript-eslint/typescript-eslint). In addition, [lit-analyzer](https://www.npmjs.com/package/lit-analyzer) is used to type-check and lint lit-html templates with the same engine and rules as lit-plugin.
+This directory contains the entry point and handler for the routes of the application. The main file in this directory is app.ts, which sets up the routing for the application.
 
-The rules are mostly the recommended rules from each project, but some have been turned off to make LitElement usage easier. The recommended rules are pretty strict, so you may want to relax them by editing `.eslintrc.json` and `tsconfig.json`.
+#### routes/
 
-To lint the project run:
+This directory contains the different routes for the application. Each route has its own subdirectory, which contains the necessary files for that route, including .ts, .styles.ts, .template.ts, and .types.ts files.
 
-```bash
-npm run lint
-```
+#### share/
 
-## Formatting
+This directory contains classes and instances that are shared across the application. It contains the following subdirectories:
 
-[Prettier](https://prettier.io/) is used for code formatting. It has been pre-configured according to the Lit's style. You can change this in `.prettierrc.json`.
+#### components/
 
-Prettier has not been configured to run when committing files, but this can be added with Husky and and `pretty-quick`. See the [prettier.io](https://prettier.io/) site for instructions.
+This directory contains reusable web components that can be used throughout the application. Each component has its own subdirectory, which contains the necessary files for that component, including .ts, .styles.ts, .template.ts, and .types.ts files.
 
-## Static Site
+#### logic/
 
-This project includes a simple website generated with the [eleventy](11ty.dev) static site generator and the templates and pages in `/docs-src`. The site is generated to `/docs` and intended to be checked in so that GitHub pages can serve the site [from `/docs` on the master branch](https://help.github.com/en/github/working-with-github-pages/configuring-a-publishing-source-for-your-github-pages-site).
+This directory contains classes that handle the logic of the machine learning models used in the application, such as the "Dance Replicator" model.
 
-To enable the site go to the GitHub settings and change the GitHub Pages &quot;Source&quot; setting to &quot;master branch /docs folder&quot;.</p>
+#### services/
 
-To build the site, run:
+This directory contains global services used throughout the application, such as the ml5 and p5 libraries.
 
-```bash
-npm run docs
-```
+### Technology Stack
 
-To serve the site locally, run:
+The Dance For Everyone project is built using the following technologies:
 
-```bash
-npm run docs:serve
-```
+#### Browser:
 
-To watch the site files, and re-build automatically, run:
+The browser was selected as the platform to host the project because it is widely available and accessible to a large audience. This allows for the project to reach a large number of users, regardless of their device or operating system.
 
-```bash
-npm run docs:watch
-```
+#### LitElement:
 
-The site will usually be served at http://localhost:8000.
+LitElement is a lightweight and efficient library for building web components. It makes it easy to create reusable, performant, and expressive UI elements that can be easily integrated into the project.
 
-## Bundling and minification
+#### TensorFlow.js:
 
-This starter project doesn't include any build-time optimizations like bundling or minification. We recommend publishing components as unoptimized JavaScript modules, and performing build-time optimizations at the application level. This gives build tools the best chance to deduplicate code, remove dead code, and so on.
+TensorFlow.js is a powerful and flexible library for developing machine learning models in JavaScript. It allows for easy deployment of models in the browser, which is important for the "Dance Replicator" model in the project.
 
-For information on building application projects that include LitElement components, see [Build for production](https://lit.dev/docs/tools/production/) on the Lit site.
+#### Typescript:
 
-## More information
+Typescript is a typed superset of JavaScript that provides a more robust development experience. It enforces strict type checking and improves code readability and maintainability, which is essential for a large and complex project like Dance For Everyone.
 
-See [Get started](https://lit.dev/docs/getting-started/) on the Lit site for more information.
+## Contributing
+
+If you would like to contribute to the development of Dance For Everyone, please follow these guidelines:
+
+Fork the repository.
+Create a new branch for your changes.
+Make your changes and test them thoroughly.
+Submit a pull request to the development branch.
+Please also make sure to update any documentation as necessary and follow the code style of the project.
+
+## Licensing
+
+The Dance For Everyone frontend is open-source and available under the MIT License.
+
+## Conclusion
+
+Dance For Everyone is a project that aims to make learning dance more accessible to everyone. With the help of modern web technologies, machine learning, and user-centered design, we hope to create an enjoyable and effective experience for users of all ages and backgrounds. We hope you find our project helpful and we welcome any feedback or contributions to make it better.
