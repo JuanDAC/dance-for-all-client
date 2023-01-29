@@ -1,15 +1,28 @@
+import {concat, tensor2d, Tensor2D} from '@tensorflow/tfjs';
 import p5, {Element, Image} from 'p5';
 import {Dance} from 'routes/dance/dance';
 
-export type EventOn = {poses?: EventPose; estimatesPoses?: EstimatesPoses};
+export type EventOn = {
+  poses?: EventPose;
+  estimatesPoses?: EstimatesPoses;
+  inputTensor?: Tensor2D;
+};
+
+export type Scales = {
+  x: number;
+  y: number;
+  boundX: [number, number, number, number];
+  boundY: [number, number, number, number];
+};
 
 export class PoseNet {
-  protected dance: Dance;
-  protected poseNet!: Ml5;
-  protected p!: p5;
-  protected image!: Image | HTMLVideoElement | ImageData | Element;
-  protected estimatesPoses: EstimatesPoses = [];
-  protected active = false;
+  public dance: Dance;
+  public poseNet!: Ml5;
+  public p!: p5;
+  public image!: Image | HTMLVideoElement | ImageData | Element;
+  public estimatesPoses: EstimatesPoses = [];
+  public active = false;
+  public inputTensor = tensor2d([], [0, 0]);
 
   constructor(dance: Dance, poseNet: Ml5) {
     this.dance = dance;
@@ -52,6 +65,29 @@ export class PoseNet {
     );
   }
 
+  normalizePoseData({keypoints, rightAnkle, leftAnkle, nose}: Pose) {
+    if (!nose || !keypoints || !rightAnkle || keypoints.length === 0) return;
+
+    const minX = Math.min(rightAnkle.x, leftAnkle.x);
+    const maxX = Math.max(rightAnkle.x, leftAnkle.x);
+
+    const scales: Scales = {
+      x: minX,
+      y: nose.y,
+      boundX: [0, leftAnkle.y - nose.y, 0, 1],
+      boundY: [0, maxX - minX, 0, 1],
+    };
+
+    const currentInputTensor = tensor2d(
+      keypoints.map(({position}) => [
+        this.p.map(position.x - scales.x, ...scales.boundX),
+        this.p.map(position.y - scales.y, ...scales.boundY),
+      ])
+    );
+
+    this.inputTensor = concat([this.inputTensor, currentInputTensor], 0);
+  }
+
   storageEstimates({pose}: EventPose[0]) {
     const {
       rightShoulder,
@@ -80,6 +116,8 @@ export class PoseNet {
     if (valid.some((pose) => !pose)) {
       return;
     }
+
+    this.normalizePoseData(pose);
 
     const skeletonEstimations: EstimatesPose = [
       {x: nose.x, y: nose.y},

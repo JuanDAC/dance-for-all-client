@@ -35,5 +35,5 @@
     "useDefineForClassFields": false
   },
   "include": ["src/**/*.ts"],
-  "exclude": ["tsconfig.json"]
+  "exclude": ["tsconfig.json", "node_modules"]
 }

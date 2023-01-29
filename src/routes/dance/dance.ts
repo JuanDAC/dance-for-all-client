@@ -88,7 +88,7 @@ export class Dance extends LitElement {
       new p5(this.canvasEfectsSketch, this.$video.parentElement!);
       this.canvasDanceHandler.activation = true;
     }, 100);
-    setInterval(this.playerValidation.bind(this), 1000);
+    setInterval(this.playerValidation.bind(this), 2000);
   }
 
   startDance() {
@@ -101,6 +101,8 @@ export class Dance extends LitElement {
   private playerValidation() {
     const estimatesPosesVideo = [...this.estimatesPosesVideo];
     const estimatesPosesCamera = [...this.estimatesPosesCamera];
+
+    console.log(estimatesPosesVideo, estimatesPosesCamera)
 
     const percentagesVideo: {[T in keyof Percentages]: number[]} = {
       upperTrunk: [],

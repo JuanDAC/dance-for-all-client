@@ -4,8 +4,8 @@ import {EventOn, PoseNet} from '../pose-net/pose-net.logic';
 import '../../services/ml5/ml5.types';
 
 export class CanvasDance extends PoseNet {
-  private canvas!: p5.Renderer;
-  private time = 0;
+  public canvas!: p5.Renderer;
+  public time = 0;
 
   constructor(dance: Dance, poseNet: Ml5) {
     super(dance, poseNet);
@@ -17,16 +17,19 @@ export class CanvasDance extends PoseNet {
     this.p.draw = () => this.draw();
   }
 
-  override on({poses, estimatesPoses}: EventOn): void {
+  override on({poses, estimatesPoses, inputTensor}: EventOn): void {
     if (poses) {
       this.dance.posesVideo = poses;
     }
     if (estimatesPoses) {
       this.dance.estimatesPosesVideo = estimatesPoses;
     }
+    if (inputTensor) {
+      console.log(inputTensor);
+    }
   }
 
-  private setup() {
+  public setup() {
     const width = window.innerWidth - 100,
       height = window.innerHeight - 100;
     this.canvas = this.p.createCanvas(width, height, 'p2d');
@@ -36,11 +39,11 @@ export class CanvasDance extends PoseNet {
   }
 
   public set activation(value: boolean) {
+    console.log('activation: ', value);
     this.active = value;
   }
 
-  private draw() {
-    /*     if (!this.dance.$video || this.dance?.$video?.paused) return; */
+  public draw() {
     if (!this.active) return;
 
     this.p.drawingContext.drawImage(
@@ -50,6 +53,7 @@ export class CanvasDance extends PoseNet {
       this.p.width,
       this.p.height
     );
+
     this.time += this.p.deltaTime;
 
     if (this.time >= 300) {
@@ -63,11 +67,14 @@ export class CanvasDance extends PoseNet {
     ).getImageData(0, 0, this.p.width, this.p.height);
 
     if (!this.dance.$video || !this.dance?.$video?.paused) {
-      /*       this.load(); */
+      this.load();
     }
 
     const currentPoses = this.dance?.posesVideo ?? [];
     currentPoses.forEach(this.storageEstimates.bind(this));
-    this.on.call(this, {estimatesPoses: [...this.estimatesPoses]});
+    this.on.call(this, {
+      estimatesPoses: [...this.estimatesPoses],
+      inputTensor: this.inputTensor.clone(),
+    });
   }
 }
