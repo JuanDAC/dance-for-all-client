@@ -78,6 +78,7 @@ export class CanvasEffects {
     this.p.noStroke();
     this.p.rect(0, 0, this.p.width, this.p.height);
     this.time += this.p.deltaTime;
+
     if (this.time >= 1250) {
       this.time = 0;
       this.activeAnimation = 0;

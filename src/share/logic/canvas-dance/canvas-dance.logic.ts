@@ -25,7 +25,7 @@ export class CanvasDance extends PoseNet {
       this.dance.estimatesPosesVideo = estimatesPoses;
     }
     if (inputTensor) {
-      console.log(inputTensor);
+      this.dance.inputTensorVideo = inputTensor;
     }
   }
 
@@ -39,7 +39,6 @@ export class CanvasDance extends PoseNet {
   }
 
   public set activation(value: boolean) {
-    console.log('activation: ', value);
     this.active = value;
   }
 
@@ -61,6 +60,7 @@ export class CanvasDance extends PoseNet {
     }
 
     if (this.time >= 150) return;
+    if (this.time % 2) return;
 
     this.image = (
       this.p.drawingContext as CanvasRenderingContext2D
@@ -72,6 +72,7 @@ export class CanvasDance extends PoseNet {
 
     const currentPoses = this.dance?.posesVideo ?? [];
     currentPoses.forEach(this.storageEstimates.bind(this));
+    if (!this.inputTensor) return;
     this.on.call(this, {
       estimatesPoses: [...this.estimatesPoses],
       inputTensor: this.inputTensor.clone(),

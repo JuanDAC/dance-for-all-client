@@ -12,6 +12,7 @@ import {CanvasDance} from 'share/logic/canvas-dance/canvas-dance.logic';
 import {CameraDance} from 'share/logic/camera-dance/camera-dance.logic';
 import {Percentages} from './dance.types';
 import {Task} from '@lit-labs/task';
+import * as tf from '@tensorflow/tfjs';
 
 @customElement('dance-for-everyone-route-dance')
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -23,6 +24,8 @@ export class Dance extends LitElement {
 
   public estimatesPosesVideo: EstimatesPoses = [];
   public estimatesPosesCamera: EstimatesPoses = [];
+  public inputTensorCamera!: tf.Tensor2D;
+  public inputTensorVideo!: tf.Tensor2D;
 
   public canvasEffectsHandler!: CanvasEffects;
   public canvasDanceHandler!: CanvasDance;
@@ -98,11 +101,94 @@ export class Dance extends LitElement {
     this.$video.volume = 1;
   }
 
-  private playerValidation() {
+  createModel(inputShape: [number]): tf.Sequential {
+    const model = tf.sequential();
+    // Create a machine learning model in Tensorflow.js using a suitable algorithm
+    model.add(
+      tf.layers.dense({
+        units: 2,
+        inputShape,
+      })
+    );
+    model.add(
+      tf.layers.dense({
+        units: 2,
+        activation: 'relu',
+      })
+    );
+    model.add(
+      tf.layers.dense({
+        units: 1,
+        activation: 'sigmoid',
+      })
+    );
+    return model;
+  }
+
+  async playerValidation() {
+    if (
+      !this.inputTensorVideo ||
+      !this.inputTensorCamera ||
+      this.inputTensorCamera.shape[0] < 50 ||
+      this.inputTensorVideo.shape[0] < 50
+    )
+      return;
+
+    const inputTensorA = (this.inputTensorVideo = this.inputTensorVideo.slice(
+      [this.inputTensorVideo.shape[0] - 50, 0],
+      [50, this.inputTensorVideo.shape[1]]
+    ));
+    const inputTensorB = (this.inputTensorCamera = this.inputTensorCamera.slice(
+      [this.inputTensorCamera.shape[0] - 50, 0],
+      [50, this.inputTensorCamera.shape[1]]
+    ));
+    this.cameraDanceHandler.estimatesClear();
+    this.canvasDanceHandler.estimatesClear();
+    const xs = tf
+      .concat([inputTensorA, inputTensorB], 0)
+      .reshape([-1, inputTensorA.shape[1]]);
+    const ys = tf.tensor1d(Array(xs.shape[0]).fill(0));
+
+    const model = localStorage.getItem('dance-for-everyone:model')
+      ? await tf.loadLayersModel(
+          localStorage.getItem('dance-for-everyone:model')!
+        )
+      : this.createModel([xs.shape[1] ?? 2]);
+
+    model.compile({
+      optimizer: 'adam',
+      loss: 'binaryCrossentropy',
+      metrics: ['accuracy'],
+    });
+    await model.fit(xs, ys, {
+      epochs: 5,
+      callbacks: {
+        onEpochEnd: (epoch, logs) => {
+          // As each frame is analyzed, use the model to compare the poses and update the model with the new information
+          // This will improve the accuracy of the model over time
+          console.log(`Epoch: ${epoch}, Loss: ${logs.loss}`);
+
+          // Use the local storage in JavaScript to save the knowledge of the model after each update
+          localStorage.setItem(
+            'dance-for-everyone:model',
+            model.toJSON() as string
+          );
+        },
+      },
+    });
+    const result = model.predict(inputTensorA) as tf.Tensor;
+    const prediction = [...(await result.data())];
+    const isEquivalent = prediction[0] > 0.5;
+    console.log('result: ', isEquivalent);
+    this.requestUpdate();
+    this.setMessageML(prediction);
+  }
+
+  playerValidationOld() {
     const estimatesPosesVideo = [...this.estimatesPosesVideo];
     const estimatesPosesCamera = [...this.estimatesPosesCamera];
 
-    console.log(estimatesPosesVideo, estimatesPosesCamera)
+    console.log(estimatesPosesVideo, estimatesPosesCamera);
 
     const percentagesVideo: {[T in keyof Percentages]: number[]} = {
       upperTrunk: [],
@@ -175,6 +261,31 @@ export class Dance extends LitElement {
     this.cameraDanceHandler.estimatesClear();
     this.canvasDanceHandler.estimatesClear();
     this.requestUpdate();
+  }
+  setMessageML(prediction: number[]) {
+    const percentage =
+      prediction.reduce((acum, value) => acum + value, 0) / prediction.length;
+
+    console.log(percentage);
+
+    setTimeout(() => {
+      if (['good', 'perfect', 'bad'].includes(this.danceKind)) {
+        this.danceKind = '';
+      }
+    }, 1000);
+
+    if (percentage < 0.5) {
+      this.danceKind = 'bad';
+      return 1;
+    }
+
+    if (percentage < 0.8) {
+      this.danceKind = 'good';
+      return 1;
+    }
+
+    this.danceKind = 'perfect';
+    return 1;
   }
 
   setMessage(

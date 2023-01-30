@@ -6,6 +6,7 @@ import {EventOn, PoseNet} from '../pose-net/pose-net.logic';
 /* import * as ml5 from 'ml5'; */
 
 export class CameraDance extends PoseNet {
+  time = 0;
   constructor(dance: Dance, poseNet: Ml5) {
     super(dance, poseNet);
   }
@@ -16,12 +17,15 @@ export class CameraDance extends PoseNet {
     this.p.draw = () => this.draw();
   }
 
-  override on({poses, estimatesPoses}: EventOn): void {
+  override on({poses, estimatesPoses, inputTensor}: EventOn): void {
     if (poses) {
       this.dance.posesCamera = poses;
     }
     if (estimatesPoses) {
       this.dance.estimatesPosesCamera = estimatesPoses;
+    }
+    if (inputTensor) {
+      this.dance.inputTensorCamera = inputTensor;
     }
   }
 
@@ -40,9 +44,22 @@ export class CameraDance extends PoseNet {
 
   private draw() {
     if (!this.active) return;
+    this.time += this.p.deltaTime;
+
+    if (this.time >= 300) {
+      this.time = 0;
+    }
+
+    if (this.time >= 150) return;
+    if (this.time % 2) return;
     this.load();
+
     const currentPoses = this.dance?.posesCamera ?? [];
     currentPoses.forEach(this.storageEstimates.bind(this));
-    this.on.call(this, {estimatesPoses: [...this.estimatesPoses]});
+    if (!this.inputTensor) return;
+    this.on.call(this, {
+      estimatesPoses: [...this.estimatesPoses],
+      inputTensor: this.inputTensor.clone(),
+    });
   }
 }
