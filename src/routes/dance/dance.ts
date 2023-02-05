@@ -103,7 +103,6 @@ export class Dance extends LitElement {
 
   createModel(inputShape: [number]): tf.Sequential {
     const model = tf.sequential();
-    // Create a machine learning model in Tensorflow.js using a suitable algorithm
     model.add(
       tf.layers.dense({
         units: 2,
@@ -126,47 +125,43 @@ export class Dance extends LitElement {
   }
 
   async playerValidation() {
+    const max = 10;
     if (
       !this.inputTensorVideo ||
       !this.inputTensorCamera ||
-      this.inputTensorCamera.shape[0] < 50 ||
-      this.inputTensorVideo.shape[0] < 50
+      this.inputTensorCamera.shape[0] < max ||
+      this.inputTensorVideo.shape[0] < max
     )
       return;
 
     const inputTensorA = (this.inputTensorVideo = this.inputTensorVideo.slice(
-      [this.inputTensorVideo.shape[0] - 50, 0],
-      [50, this.inputTensorVideo.shape[1]]
+      [this.inputTensorVideo.shape[0] - max, 0],
+      [max, this.inputTensorVideo.shape[1]]
     ));
     const inputTensorB = (this.inputTensorCamera = this.inputTensorCamera.slice(
-      [this.inputTensorCamera.shape[0] - 50, 0],
-      [50, this.inputTensorCamera.shape[1]]
+      [this.inputTensorCamera.shape[0] - max, 0],
+      [max, this.inputTensorCamera.shape[1]]
     ));
     this.cameraDanceHandler.estimatesClear();
     this.canvasDanceHandler.estimatesClear();
     const xs = tf
       .concat([inputTensorA, inputTensorB], 0)
-      .reshape([-1, inputTensorA.shape[1]]);
+      .reshape([-1, inputTensorB.shape[1]]);
     const ys = tf.tensor1d(Array(xs.shape[0]).fill(0));
-
-    const model = localStorage.getItem('dance-for-everyone:model')
-      ? await tf.loadLayersModel(
-          localStorage.getItem('dance-for-everyone:model')!
-        )
-      : this.createModel([xs.shape[1] ?? 2]);
+    const model = this.createModel([xs.shape[1] ?? 2]);
 
     model.compile({
       optimizer: 'adam',
-      loss: 'binaryCrossentropy',
-      metrics: ['accuracy'],
+      loss: 'meanSquaredError',
+      metrics: ['mse'],
     });
     await model.fit(xs, ys, {
-      epochs: 5,
+      epochs: 10,
       callbacks: {
-        onEpochEnd: (epoch, logs) => {
+        onTrainEnd: (logs) => {
           // As each frame is analyzed, use the model to compare the poses and update the model with the new information
           // This will improve the accuracy of the model over time
-          console.log(`Epoch: ${epoch}, Loss: ${logs.loss}`);
+          console.log(`Epoch: `, logs);
 
           // Use the local storage in JavaScript to save the knowledge of the model after each update
           localStorage.setItem(
@@ -178,95 +173,13 @@ export class Dance extends LitElement {
     });
     const result = model.predict(inputTensorA) as tf.Tensor;
     const prediction = [...(await result.data())];
-    const isEquivalent = prediction[0] > 0.5;
-    console.log('result: ', isEquivalent);
+    /*     const isEquivalent = prediction[0] > 0.5; */
     this.requestUpdate();
     this.setMessageML(prediction);
   }
 
-  playerValidationOld() {
-    const estimatesPosesVideo = [...this.estimatesPosesVideo];
-    const estimatesPosesCamera = [...this.estimatesPosesCamera];
-
-    console.log(estimatesPosesVideo, estimatesPosesCamera);
-
-    const percentagesVideo: {[T in keyof Percentages]: number[]} = {
-      upperTrunk: [],
-      lowerTrunk: [],
-      arms: [],
-      legs: [],
-      all: [],
-    };
-    const percentagesCamera: Percentages = {
-      upperTrunk: 0,
-      lowerTrunk: 0,
-      arms: 0,
-      legs: 0,
-      all: 0,
-    };
-    estimatesPosesVideo.forEach(
-      ([_, /*upperTrunk,*/ lowerTrunk, legs, arms]) => {
-        /*       percentagesVideo.upperTrunk.push(upperTrunk ?? 0); */
-        percentagesVideo.lowerTrunk.push(lowerTrunk ?? 0);
-        percentagesVideo.legs.push(legs ?? 0);
-        percentagesVideo.arms.push(arms ?? 0);
-        percentagesVideo.all.push(
-          /*         upperTrunk ?? 0, */
-          lowerTrunk ?? 0,
-          legs ?? 0,
-          arms ?? 0
-        );
-      }
-    );
-    estimatesPosesCamera.forEach(
-      ([_, /* upperTrunk, */ lowerTrunk, legs, arms]) => {
-        /*       percentagesCamera.upperTrunk += Number(
-        percentagesVideo.upperTrunk.includes(upperTrunk ?? 0)
-      ); */
-        percentagesCamera.lowerTrunk += Number(
-          percentagesVideo.lowerTrunk.includes(lowerTrunk ?? 0)
-        );
-        percentagesCamera.legs += Number(
-          percentagesVideo.legs.includes(legs ?? 0)
-        );
-        percentagesCamera.arms += Number(
-          percentagesVideo.arms.includes(arms ?? 0)
-        );
-        percentagesCamera.all +=
-          /*           Number(percentagesVideo.all.includes(upperTrunk ?? 0)) + */
-          Number(percentagesVideo.all.includes(lowerTrunk ?? 0)) +
-          Number(percentagesVideo.all.includes(legs ?? 0)) +
-          Number(percentagesVideo.all.includes(arms ?? 0));
-      }
-    );
-
-    const {length} = estimatesPosesCamera;
-    /*     percentagesCamera.upperTrunk /= length; */
-    percentagesCamera.lowerTrunk /= length;
-    percentagesCamera.legs /= length;
-    percentagesCamera.arms /= length;
-    percentagesCamera.all /= length * 4;
-
-    const values = Object.values(percentagesCamera);
-    const fails = values.filter((v) => v === 0);
-
-    if (fails.length > 0)
-      this.setMessage(estimatesPosesCamera, estimatesPosesVideo, 0);
-
-    const percentages = percentagesCamera.all;
-
-    if (fails.length === 0)
-      this.setMessage(estimatesPosesCamera, estimatesPosesVideo, percentages);
-
-    this.cameraDanceHandler.estimatesClear();
-    this.canvasDanceHandler.estimatesClear();
-    this.requestUpdate();
-  }
   setMessageML(prediction: number[]) {
-    const percentage =
-      prediction.reduce((acum, value) => acum + value, 0) / prediction.length;
-
-    console.log(percentage);
+    const percentage = prediction.sort((A, B) => B - A).pop() ?? 0;
 
     setTimeout(() => {
       if (['good', 'perfect', 'bad'].includes(this.danceKind)) {
@@ -274,53 +187,17 @@ export class Dance extends LitElement {
       }
     }, 1000);
 
-    if (percentage < 0.5) {
-      this.danceKind = 'bad';
-      return 1;
+    if (percentage < 0.6) {
+      return this.danceKind = 'bad';
     }
 
     if (percentage < 0.8) {
-      this.danceKind = 'good';
-      return 1;
+      return this.danceKind = 'good';
     }
 
-    this.danceKind = 'perfect';
-    return 1;
+    return this.danceKind = 'perfect';
   }
 
-  setMessage(
-    estimatesPosesCamera: EstimatesPose[],
-    estimatesPosesVideo: EstimatesPose[],
-    percentage: number
-  ) {
-    if (['good', 'perfect', 'bad'].includes(this.danceKind)) {
-      this.danceKind = '';
-      return 1;
-    }
-
-    if (estimatesPosesVideo.length < 6) {
-      this.danceKind = '';
-      return 0;
-    }
-
-    if (estimatesPosesCamera.length < 6) {
-      this.danceKind = 'bad';
-      return 0;
-    }
-
-    if (percentage < 0.5) {
-      this.danceKind = 'bad';
-      return 1;
-    }
-
-    if (percentage < 0.8) {
-      this.danceKind = 'good';
-      return 1;
-    }
-
-    this.danceKind = 'perfect';
-    return 1;
-  }
 
   get canvasEfectsSketch() {
     this.canvasEffectsHandler = new CanvasEffects(this);
