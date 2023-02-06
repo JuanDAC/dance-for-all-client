@@ -6,15 +6,15 @@ export class DanceReplicator {
   max = 10;
 
   async init() {
-    const modelData = localStorage.getItem(this.keyToStorage);
+    /*     const modelData = localStorage.getItem(this.keyToStorage);
     if (modelData) {
       const layersModel = await tf.loadLayersModel(JSON.parse(modelData));
       this.model = tf.sequential({
         layers: layersModel.layers.map((layer) => layer),
       });
-    } else {
-      this.model = this.createModel([2]);
-    }
+    } else { */
+    this.model = this.createModel([2]);
+    /*     } */
   }
 
   createModel(inputShape: [number]): tf.Sequential {
@@ -63,6 +63,7 @@ export class DanceReplicator {
   }
 
   async danceValidation(inputTensorA: tf.Tensor2D, inputTensorB: tf.Tensor2D) {
+    this.model = this.createModel([2]);
     const xs = tf
       .concat([inputTensorA, inputTensorB], 0)
       .reshape([-1, inputTensorB.shape[1]]);
@@ -78,10 +79,10 @@ export class DanceReplicator {
       epochs: 10,
       callbacks: {
         onTrainEnd: () => {
-          localStorage.setItem(
+          /*           localStorage.setItem(
             this.keyToStorage,
             this.model.toJSON() as string
-          );
+          ); */
         },
       },
     });

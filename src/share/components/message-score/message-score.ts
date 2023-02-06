@@ -12,26 +12,10 @@ export class MessageScore extends LitElement {
   static override styles = [...styles];
 
   @property({attribute: 'data-kind'})
-  kind!: 'good' | 'perfect' | 'bad';
+  kind!: 'good' | 'perfect' | 'bad' | 'ok';
 
   constructor() {
     super();
     this.render = renderTemplate.bind(this);
   }
-  /*   override attributeChangedCallback(
-    name: string,
-    old: string | null,
-    value: string | null
-  ): void {
-    super.attributeChangedCallback(name, old, value);
-    if (name.includes('data-active') && JSON.parse(value ?? 'false')) {
-      setTimeout(() => this.setAttribute('data-active', 'false'), 1000);
-    }
-  }
- */
-  /*   override shouldUpdate(changedProperties: Map<string, unknown>) {
-    console.log(changedProperties);
-    // Only update element if prop1 changed.
-    return true;
-  } */
 }

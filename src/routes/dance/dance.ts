@@ -1,4 +1,4 @@
-import {LitElement, TemplateResult} from 'lit';
+import {LitElement} from 'lit';
 import {customElement, property, query, state} from 'lit/decorators.js';
 import '../../share/components/title/title';
 import {styles} from './dance.styles';
@@ -18,8 +18,8 @@ import {DanceReplicator} from 'share/logic/dance-replicator/dance-replicator.log
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export class Dance extends LitElement implements Template {
   static override styles = [...styles];
-
   public startVideo = false;
+  public scores = 0;
 
   public posesVideo!: EventPose;
   public posesCamera!: EventPose;
@@ -46,19 +46,16 @@ export class Dance extends LitElement implements Template {
   public canvasDance!: HTMLCanvasElement;
 
   @property({type: Number})
+  public score = 0;
+
+  @property({type: Number})
   public videoHeight: number = window.innerHeight;
 
   @property({type: Number})
   public videoWidth: number = window.innerWidth;
 
   @property()
-  danceColor = [];
-
-  @property()
-  danceVelocity = [];
-
-  @property()
-  danceKind!: 'good' | 'perfect' | 'bad' | '';
+  danceKind!: 'ok' | 'good' | 'perfect' | 'bad' | '';
 
   @state()
   videoId!: string;
@@ -69,7 +66,7 @@ export class Dance extends LitElement implements Template {
 
   pending = template.pending.bind(this);
 
-  complete = template.error.bind(this);
+  complete = template.complete.bind(this);
 
   error = template.error.bind(this);
 
@@ -97,7 +94,6 @@ export class Dance extends LitElement implements Template {
     this.danceReplicator.init();
   }
 
-
   override connectedCallback() {
     super.connectedCallback();
   }
@@ -124,12 +120,20 @@ export class Dance extends LitElement implements Template {
     this.cameraDanceHandler.estimatesClear();
     this.canvasDanceHandler.estimatesClear();
 
-    const {min} = await this.danceReplicator.danceValidation(tensorA, TensorB);
+    const {percentage} = await this.danceReplicator.danceValidation(
+      tensorA,
+      TensorB
+    );
 
-    this.setMessage(min);
+    const max = 75 as const;
+
+    this.scores += percentage;
+    this.score = Math.round((this.scores / max) * 5);
+    this.setMessage(percentage);
   }
 
   playDance() {
+    this.requestUpdate();
     this.playerValidationInterval = setInterval(
       this.playerValidation.bind(this),
       2000
@@ -162,10 +166,14 @@ export class Dance extends LitElement implements Template {
       if (['good', 'perfect', 'bad'].includes(this.danceKind)) {
         this.danceKind = '';
       }
-    }, 1000);
+    }, 900);
+
+    if (percentage < 0.4) {
+      return (this.danceKind = 'bad');
+    }
 
     if (percentage < 0.6) {
-      return (this.danceKind = 'bad');
+      return (this.danceKind = 'ok');
     }
 
     if (percentage < 0.8) {

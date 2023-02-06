@@ -3,26 +3,29 @@ import {customElement, property} from 'lit/decorators.js';
 import {styles} from './starts-score.styles';
 import {renderTemplate} from './starts-score.template';
 
-type StartsColor = 'normal' | 'fantastic' | 'awesome';
-type StartsVelocity = 'middle' | 'slow' | 'fast';
+/* type StartsColor = 'normal' | 'fantastic' | 'awesome';
+type StartsVelocity = 'middle' | 'slow' | 'fast'; */
 
 /**
  * @element dance-for-everyone-starts-score
- * @prop {StartsColor[]} data-color - Array of colors
- * @prop {StartsVelocity[]} data-velocity - Array of velocities
+ * @prop {number} data-scores - Scores of the user in the current level
  */
 @customElement('dance-for-everyone-starts-score')
 export class StartsScore extends LitElement {
   static override styles = [...styles];
 
-  @property({attribute: 'data-color'})
-  color: StartsColor[] = [];
 
-  @property({attribute: 'data-velocity'})
-  velocity: StartsVelocity[] = [];
+  @property({attribute: 'data-score', type: Number})
+  score = 0;
 
   constructor() {
     super();
     this.render = renderTemplate.bind(this);
+  }
+
+  override attributeChangedCallback(name: string, _old: string | null, value: string | null): void {
+    super.attributeChangedCallback(name, _old, value);
+    console.log(name, value);
+    this.requestUpdate();
   }
 }

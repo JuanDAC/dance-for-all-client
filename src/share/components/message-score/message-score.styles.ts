@@ -28,6 +28,11 @@ export const messageStyles = css`
     filter: hue-rotate(84deg);
     animation: dance__message--active ease-in-out 1s;
   }
+
+  .dance__message.--ok {
+    filter: hue-rotate(295deg) saturate(0.75) brightness(0.75);
+    animation: dance__message--active ease-in-out 1s;
+  }
 `;
 
 export const animationStyles = css`

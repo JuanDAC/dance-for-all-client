@@ -34,8 +34,7 @@ export const template: Template = {
           .videoHeight}px; display: grid; place-items: center;"
       >
         <dance-for-everyone-title>
-          <span data-small>Now we have an error</span>
-          <span data-small>try to</span>
+          <span data-small>Now we have an error try to</span>
           <span data-big>Reload</span>
           <span data-small>or contact with us</span>
         </dance-for-everyone-title>
@@ -62,7 +61,7 @@ export const template: Template = {
       >
         <video
           id="dance__video"
-          src=${url}
+          src=${String(url)}
           preload="metadata"
           @play=${this.playDance.bind(this)}
           @ended=${this.endDance.bind(this)}
@@ -74,8 +73,7 @@ export const template: Template = {
         <article class="dance__scores">
           <div class="dance__score">
             <dance-for-everyone-starts-score
-              .data-color=${this.danceColor}
-              .data-velocity=${this.danceVelocity}
+              data-score=${this.score}
             >
             </dance-for-everyone-starts-score>
             <dance-for-everyone-message-score

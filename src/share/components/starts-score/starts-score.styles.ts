@@ -17,31 +17,30 @@ export const startsStyles = css`
     filter: blur(1.5px) saturate(0);
   }
 
-  .dance__start.--active {
-    animation: dance__start--active infinite linear;
-  }
-
-  .dance__start.--normal {
+  .dance__starts.--normal {
     filter: hue-rotate(0deg);
   }
 
-  .dance__start.--fantastic {
+  .dance__starts.--fantastic {
     filter: hue-rotate(90deg);
   }
 
-  .dance__start.--awesome {
+  .dance__starts.--awesome {
     filter: hue-rotate(220deg);
   }
 
   .dance__start.--slow {
+    animation: dance__start--active infinite linear;
     animation-duration: 600ms;
   }
 
   .dance__start.--middle {
+    animation: dance__start--active infinite linear;
     animation-duration: 400ms;
   }
 
   .dance__start.--fast {
+    animation: dance__start--active infinite linear;
     animation-duration: 200ms;
   }
 `;
